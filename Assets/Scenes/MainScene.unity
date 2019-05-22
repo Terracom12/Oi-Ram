@@ -281,7 +281,7 @@ MonoBehaviour:
   m_platform: {fileID: 3213404675934065036, guid: 6661295869aeb9c4ca2a052584193152,
     type: 3}
   m_numPlatforms: 100
-  m_maxYOffset: 8
+  m_maxYOffset: 15
   m_xOffset: 20
 --- !u!1 &218336971
 GameObject:
@@ -1000,7 +1000,7 @@ MonoBehaviour:
   m_moveVelocity: 12
   m_maxSpeed: 15
   m_jumpVelocity: 15
-  m_fallMultiplier: 18
+  m_fallMultiplier: 6
   m_lowJumpMultiplier: 2
   m_recoveryTime: 250
   m_groundCheck: {fileID: 218336972}
@@ -1042,7 +1042,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 3.3650744}
+  m_Offset: {x: 0, y: 3.2460084}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -1053,7 +1053,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 0.95373154}
+  m_Size: {x: 1, y: 1.1920276}
   m_EdgeRadius: 0
 --- !u!58 &1476470096
 CircleCollider2D:
@@ -1068,7 +1068,7 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0, y: 2.81}
+  m_Offset: {x: -0, y: 2.65}
   serializedVersion: 2
   m_Radius: 0.5
 --- !u!1 &1556517446

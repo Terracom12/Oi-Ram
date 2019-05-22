@@ -15,7 +15,8 @@ public class GameOverMenu : MonoBehaviour
 
 	public void RestartButton()
 	{
-		SceneManager.LoadScene("MainScene");
+        GameOver.score = 0;
+        SceneManager.LoadScene("MainScene");
 	}
 
     public void QuitButton()

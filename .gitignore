@@ -22,5 +22,9 @@
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
 
+# Unity Generated Cached Entity Files
+/[Aa]ssets/EntityCache/
+
 # All imports from asset store or elsewhere
 /[Aa]ssets/Imports/
+

@@ -1,24 +1,26 @@
 ﻿using UnityEngine;
 
+// Make sure that any object using this script has a Rigidbody2D and an Animator
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Animator))]
 public class PlayerMovement : MonoBehaviour
 {
 
 	[Header("Movement:")]
 	[SerializeField]
-	private float m_moveVelocity = 4f;
+	private float m_moveVelocity = 12f;
 	[SerializeField]
-	private float m_maxSpeed = 8f;
+	private float m_maxSpeed = 15f;
 
 	[Header("Jumping:")]
 	[SerializeField]
-	private float m_jumpVelocity = 17f;
+	private float m_jumpVelocity = 15f;
 	[SerializeField]
 	[Tooltip("The amount that gravity will be multiplied by to increase fall speed.")]
-	private float m_fallMultiplier = 10f;
+	private float m_fallMultiplier = 6f;
 	[SerializeField]
 	[Tooltip("The amount that gravity will be multiplied by when the player JUST taps the jump button.")]
-	private float m_lowJumpMultiplier = 8f;
+	private float m_lowJumpMultiplier = 2f;
 	[SerializeField]
 	[Tooltip("The time that the player has to recover after falling off a platform. (Milliseconds)")]
 	[Range(50, 1000)]
@@ -33,12 +35,13 @@ public class PlayerMovement : MonoBehaviour
 	private Transform m_ceilingCheck;
 
 	[SerializeField]
-	[Tooltip("A group of layer(s) that represents what the player can not collide with.")]
-	private LayerMask m_whatIsNotGround;
+	[Tooltip("A group of layer(s) that represents what the player can move on top of.")]
+	private LayerMask m_whatIsGround;
 
 	private Rigidbody2D m_rb;
+    private Animator m_anim;
 
-	private float m_horizontal, m_vertical;
+	private float m_horizontal;
 	private float m_lastGrounded;
 
 	private bool m_facingRight = true;
@@ -51,25 +54,23 @@ public class PlayerMovement : MonoBehaviour
 	void Awake()
 	{
 		m_rb = GetComponent<Rigidbody2D>();
-	}
+        m_anim = GetComponent<Animator>();
+
+    }
 
 	// Always do input in the Update method
 	void Update()
 	{
-		// Bitshift 1 the value of the LayerMask
-		// Then reverse (~) it because we want to
-		// INCLUDE everything that is ground.
-		m_grounded = Physics2D.Linecast(transform.position, m_groundCheck.position, 1 << m_whatIsNotGround.value);
+		m_grounded = Physics2D.Linecast(transform.position, m_groundCheck.position, m_whatIsGround);
 
-		if (m_grounded)
-		{
-			m_canJump = true;
-			m_lastGrounded = Time.time;
-		}
+        if (m_grounded)
+        {
+            m_canJump = true;
+            m_lastGrounded = Time.time;
+        }
+            
 
 		m_horizontal = Input.GetAxis("Horizontal");
-
-		m_vertical = Input.GetAxis("Vertical");
 
 		m_jumpButton = Input.GetButton("Jump");
 
@@ -84,14 +85,29 @@ public class PlayerMovement : MonoBehaviour
 
 	void FixedUpdate()
 	{
-		if (m_horizontal * GetComponent<Rigidbody2D>().velocity.x < m_maxSpeed)
+        /********************HORIZONTAL MOVEMENT********************/
+        if (m_horizontal * GetComponent<Rigidbody2D>().velocity.x < m_maxSpeed)
 			m_rb.velocity = new Vector2(m_horizontal * m_moveVelocity, m_rb.velocity.y);
 
 		if (Mathf.Abs(m_rb.velocity.x) > m_maxSpeed)
 			m_rb.velocity = new Vector2(Mathf.Sign(m_rb.velocity.x) * m_maxSpeed, m_rb.velocity.y);
+        /********************HORIZONTAL MOVEMENT********************/
 
-		/********************JUMPING********************/
-		if(m_jumping)
+        /********************ANIMATION********************/
+        if (m_grounded)
+        {
+            m_anim.SetFloat("speed", Mathf.Abs(m_rb.velocity.x) / 5);
+            m_anim.SetBool("jumping", false);
+        }
+        else
+            m_anim.SetFloat("speed", 0);
+
+        if(m_jumping)
+            m_anim.SetBool("jumping", true);
+        /********************ANIMATION********************/
+
+        /********************JUMPING********************/
+        if (m_jumping)
 		{
 			m_rb.velocity = new Vector2(m_rb.velocity.x, m_jumpVelocity);
 			m_jumping = false;
@@ -111,17 +127,16 @@ public class PlayerMovement : MonoBehaviour
 		}
 		/********************JUMPING********************/
 
-		/********************HORIZONTAL MOVEMENT********************/
-		if (m_horizontal > 0 && !m_facingRight)
+		/********************TURNING********************/
+        // If the player should be facing right and isn't, and vica versa
+		if (m_horizontal > 0 && !m_facingRight || m_horizontal < 0 && m_facingRight)
 		{
-			m_facingRight = true;
-			gameObject.transform.localScale = new Vector3(1, 1, 1);
+            // Reverse whether the player is facing right
+			m_facingRight = !m_facingRight;
+            // Multiply the x-scale by -1
+			transform.localScale = 
+                new Vector3(transform.localScale.x*-1, transform.localScale.y, transform.localScale.z);
 		}
-		else if (m_horizontal < 0 && m_facingRight)
-		{
-			m_facingRight = false;
-			gameObject.transform.localScale = new Vector3(-1, 1, 1);
-		}
-		/********************HORIZONTAL MOVEMENT********************/
-	}
+        /********************TURNING********************/
+    }
 }
